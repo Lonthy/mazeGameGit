@@ -7,6 +7,8 @@ import javax.swing.*;
 
 public class TheArchitect extends JFrame
 {
+    private int x;
+    private int y;
    public void setExit(int x, int y)//records the location of the exit so we can show it when its time
    {
        WallXCord=x;
@@ -17,26 +19,27 @@ public class TheArchitect extends JFrame
        updatedMatrix[WallXCord][WallYCord]="E";  
    }
 
+   private void findPlayer(String[][] matrix){
+       this.x = 0;
+       this.y = 0;
+    for (int i = 0; i < matrix.length; i++) //for loop will find were the player is now
+    {
+        for (int j = 0; j < matrix[i].length; j++)
+        {
+            if(matrix[i][j].equals("P"))//we found the player
+            {
+                x=i;//record the players position
+                y=j;
+                break;
+            }
+        }}//end both for loops
+    }
+
     public void playerMove(int xScale, int yScale, String[][] currentMatrix,int totalDimonds)throws StupidAssMove
     {
-       int x=0;
-       int y=0;
-       int found=0;
        globalTotalDimonds=totalDimonds; //use this later for the gui dimond count
        nextLevel(false); //dont go to the next level yet.
-       String[][] junkMatrix=currentMatrix;//we will be updating currentMatrix  
-        for (int i = 0; i < currentMatrix.length; i++) //for loop will find were the player is now
-        {
-        for (int j = 0; j < currentMatrix[i].length; j++) 
-        {
-           if(currentMatrix[i][j].equals("P"))//we found the player
-           {
-            x=i;//record the players position
-            y=j;
-            found = 1;
-            break;
-           }
-        }}//end both for loops
+        findPlayer(currentMatrix);
             if(currentMatrix[x+xScale][y+yScale].equals("H"))//its a hidden dimond
             {
                 currentMatrix[x][y]="N";
