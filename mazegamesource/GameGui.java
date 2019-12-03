@@ -59,6 +59,9 @@ public class GameGui extends JFrame implements ActionListener
         tk=new TimeKeeper();
         pack();
         setVisible (true);//show our menu bar and shagLabel.. Yea baby Yea! Whoa.. to much java.
+        fl.loadFile("level1.maz");//load the file we need
+        theArc.setExit(fl.ExitXCord(),fl.ExitYCord());
+        loadMatrixGui("newLoad");
     }//end constructor
      
     private class MyKeyHandler extends KeyAdapter //captures arrow keys movement
