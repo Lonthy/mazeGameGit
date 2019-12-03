@@ -59,9 +59,6 @@ public class GameGui extends JFrame implements ActionListener
         tk=new TimeKeeper();
         pack();
         setVisible (true);//show our menu bar and shagLabel.. Yea baby Yea! Whoa.. to much java.
-        fl.loadFile("level1.maz");//load the file we need
-        theArc.setExit(fl.ExitXCord(),fl.ExitYCord());
-        loadMatrixGui("newLoad");
     }//end constructor
      
     private class MyKeyHandler extends KeyAdapter //captures arrow keys movement
@@ -141,7 +138,27 @@ public class GameGui extends JFrame implements ActionListener
         }
         else if(e.getActionCommand().equals("SaveScore"))//allows the user to save their score at any time.
         {
-            hs.addHighScore(playerName,tk.getMinutes(),tk.getSeconds(),levelNum);
+            if(!(hs.addHighScore(playerName,tk.getMinutes(),tk.getSeconds(),levelNum))){
+                
+                JFrame popuMessg= new JFrame();
+                JPanel panelMsg= new JPanel();
+                popuMessg.setBounds(70, 90, 300, 85);
+                JLabel textmsg= new JLabel();
+                textmsg.setText("You need to add an username to save your score!");
+                textmsg.setBounds(30, 15, 45,265 );
+                JButton buttMsg= new JButton("Okay");
+                buttMsg.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) { 
+                        popuMessg.setVisible(false);
+                    } 
+                } );
+                buttMsg.setBounds(110,80 , 80, 20);
+                panelMsg.add(textmsg);
+                panelMsg.add(buttMsg);
+                popuMessg.add(panelMsg);
+                popuMessg.setVisible(true);
+            }
         }
         else if(e.getActionCommand().equals("Open"))//to start the game you have to open a maze file. this is on the menu
         {
