@@ -156,31 +156,12 @@ public class GameGui extends JFrame implements ActionListener
          }
      }//end actionPerformed method
      
-     public void loadMatrixGui(String event)
+      public void loadMatrixGui(String event)
      {
         if (event == "newLoad")
          {       
-             remove(newPanel);//remove the previous level's game from the screen
-             if(progBarPanel !=null)//remove the progress bar from the gui as long as its already been created.
-             remove(progBarPanel);
-             String[][] temp = fl.getGameMatrix();
-             scrapMatrix = new String[fl.getMatrixSizeRow()][fl.getMatrixSizeColumn()];   
-             for (int i = 0; i < scrapMatrix.length; i++){
-                for (int j = 0; j < scrapMatrix[i].length; j++){
-                    scrapMatrix[i][j]= temp[i][j];//create a new matrix so we dont have a refrence to another objects matrix!
-              }}//end double for loop
-             timeCalc = new TimeCalculator();//create the time calculator used to determine how much time each level is given.
-             timeCalc.calcTimeforMaze(fl.dimondCount(),fl.getMatrixSizeRow(),fl.getMatrixSizeColumn());//let time calculator know the parameters of the game 
-             timeLeft=timeCalc.getMinutes();//get the minutes allowed for the level
-             ix=timeCalc.getSeconds();//get the seconds allowed for the level;
-             jx=0;//reset the variable used for keeping time to zero since its a new level
-             timely = new Timer(1000,updateCursorAction);//create a timer to update the progress bar
-             timely.start();//start the timer
-             progBarPanel = new JPanel();//panel for progress bar
-             progressBar = new JProgressBar(0, timeCalc.getMinutes()*100);//minutes returns a single digit, we have to multiply it for Bar.
-             progressBar.setStringPainted(true);
-             progBarPanel.add(progressBar);
-             cp.add(progBarPanel,BorderLayout.NORTH);
+             loadNewPanel();
+             CalculateTime();
              newPanel = new JPanel();
              newPanel.setLayout(new GridLayout(fl.getMatrixSizeRow(),fl.getMatrixSizeColumn()));//set our panel for the game to the size of the matrix      
              labelMatrix=new JLabel[fl.getMatrixSizeRow()][fl.getMatrixSizeColumn()];
@@ -206,6 +187,59 @@ public class GameGui extends JFrame implements ActionListener
          setVisible (true);
          newPanel.grabFocus();  
      }//end loadMatrixGui method
+     void loadNewPanel(){
+             remove(newPanel);//remove the previous level's game from the screen
+             if(progBarPanel !=null)//remove the progress bar from the gui as long as its already been created.
+             remove(progBarPanel);
+             String[][] temp = fl.getGameMatrix();
+             scrapMatrix = new String[fl.getMatrixSizeRow()][fl.getMatrixSizeColumn()];   
+             for (int i = 0; i < scrapMatrix.length; i++){
+                for (int j = 0; j < scrapMatrix[i].length; j++){
+                    scrapMatrix[i][j]= temp[i][j];//create a new matrix so we dont have a refrence to another objects matrix!
+              }}
+     }
+ 
+    public class mazeObject extends JLabel//inner class for each maze object, aka wall, player etc
+    {
+    private JLabel imageLabel;
+        public mazeObject(String fileName)
+        {
+            fileName+=".png";
+            JLabel fancyLabel;
+            fancyLabel = new JLabel("",new ImageIcon(fileName),JLabel.LEFT);
+            newPanel.add(fancyLabel);
+        }
+    }//end inner class
+        
+    public void nextLevelLoad()
+    {
+        levelNum+=1;
+        tk.TimeKeeper(timeLeft,ix);//The TimeKeeper object keeps a running tab of the total time the player has used.(for high score)
+        timely.stop();//dont count while we are loading the next level.
+        theArc = new TheArchitect();//flush everything from TheArchitect so we dont get goffee results
+        catFileName+=01;//the next file to be loaded (number)
+        String fileName="level"+catFileName+".maz";
+        System.gc();
+        fl.loadFile(fileName);//load the file we need
+        scrapMatrix=fl.getGameMatrix();//get the new matrix from the fileloader for the next level.
+        theArc.setExit(fl.ExitXCord(),fl.ExitYCord());
+        loadMatrixGui("newLoad");         
+    }
+    public void CalculateTime(){
+                     timeCalc = new TimeCalculator();//create the time calculator used to determine how much time each level is given.
+             timeCalc.calcTimeforMaze(fl.dimondCount(),fl.getMatrixSizeRow(),fl.getMatrixSizeColumn());//let time calculator know the parameters of the game 
+             timeLeft=timeCalc.getMinutes();//get the minutes allowed for the level
+             ix=timeCalc.getSeconds();//get the seconds allowed for the level;
+             jx=0;//reset the variable used for keeping time to zero since its a new level
+             timely = new Timer(1000,updateCursorAction);//create a timer to update the progress bar
+             timely.start();//start the timer
+             progBarPanel = new JPanel();//panel for progress bar
+             progressBar = new JProgressBar(0, timeCalc.getMinutes()*100);//minutes returns a single digit, we have to multiply it for Bar.
+             progressBar.setStringPainted(true);
+             progBarPanel.add(progressBar);
+             cp.add(progBarPanel,BorderLayout.NORTH);
+    }
+ 
  
     public class mazeObject extends JLabel//inner class for each maze object, aka wall, player etc
     {
